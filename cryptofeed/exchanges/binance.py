@@ -209,13 +209,16 @@ class Binance(Feed, BinanceRestMixin):
         bid = Decimal(msg['b'])
         ask = Decimal(msg['a'])
 
+        bid_amount = Decimal(msg['B'])
+        ask_amount = Decimal(msg['A'])
+
         # Binance does not have a timestamp in this update, but the two futures APIs do
         if 'E' in msg:
             ts = self.timestamp_normalize(msg['E'])
         else:
             ts = timestamp
 
-        t = Ticker(self.id, pair, bid, ask, ts, raw=msg)
+        t = Ticker(self.id, pair, bid, ask, bid_amount, ask_amount, ts, raw=msg)
         await self.callback(TICKER, t, timestamp)
 
     async def _liquidations(self, msg: dict, timestamp: float):

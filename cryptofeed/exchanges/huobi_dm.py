@@ -14,10 +14,9 @@ from decimal import Decimal
 from yapic import json
 
 from cryptofeed.connection import AsyncConnection, RestEndpoint, Routes, WebsocketEndpoint
-from cryptofeed.defines import BUY, FUTURES, HUOBI_DM, L2_BOOK, SELL, TRADES
+from cryptofeed.defines import BUY, FUTURES, HUOBI_DM, L2_BOOK, SELL, TRADES, TICKER
 from cryptofeed.feed import Feed
-from cryptofeed.types import OrderBook, Trade
-
+from cryptofeed.types import OrderBook, Trade, Ticker
 
 LOG = logging.getLogger('feedhandler')
 
@@ -30,6 +29,7 @@ class HuobiDM(Feed):
     websocket_channels = {
         L2_BOOK: 'depth.step0',
         TRADES: 'trade.detail',
+        TICKER: 'bbo'
     }
 
     @classmethod
@@ -111,6 +111,41 @@ class HuobiDM(Feed):
             )
             await self.callback(TRADES, t, timestamp)
 
+    async def _ticker(self, msg: dict, timestamp: float):
+        """
+        {
+            "ch":"market.BTC-USD.bbo",
+            "ts":1603876157423,
+            "tick":{
+                "mrid":50997449846,
+                "id":1603876157,
+                "bid":[
+                    13684.5,
+                    10615
+                ],
+                "ask":[
+                    13684.6,
+                    3440
+                ],
+                "ts":1603876157421,
+                "version":50997449846,
+                "ch":"market.BTC-USD.bbo"
+            }
+        }
+        """
+        pair = self.exchange_symbol_to_std_symbol(msg['ch'].split('.')[1])
+        data = msg["tick"]
+        bid = Decimal(data['bid'][0])
+        ask = Decimal(data['ask'][0])
+
+        bid_amount = Decimal(data['bid'][1])
+        ask_amount = Decimal(data['ask'][1])
+
+        ts = self.timestamp_normalize(data['ts'])
+
+        t = Ticker(self.id, pair, bid, ask, bid_amount, ask_amount, ts, raw=msg)
+        await self.callback(TICKER, t, timestamp)
+
     async def message_handler(self, msg: str, conn, timestamp: float):
 
         # unzip message
@@ -127,6 +162,8 @@ class HuobiDM(Feed):
                 await self._trade(msg, timestamp)
             elif 'depth' in msg['ch']:
                 await self._book(msg, timestamp)
+            elif 'bbo' in msg['ch']:
+                await self._ticker(msg, timestamp)
             else:
                 LOG.warning("%s: Invalid message type %s", self.id, msg)
         else:
