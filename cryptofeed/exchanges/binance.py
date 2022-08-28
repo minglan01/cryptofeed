@@ -213,8 +213,8 @@ class Binance(Feed, BinanceRestMixin):
         ask_amount = Decimal(msg['A'])
 
         # Binance does not have a timestamp in this update, but the two futures APIs do
-        if 'E' in msg:
-            ts = self.timestamp_normalize(msg['E'])
+        if 'T' in msg:
+            ts = self.timestamp_normalize(msg['T'])
         else:
             ts = timestamp
 
