@@ -143,7 +143,7 @@ class HuobiDM(Feed):
 
         ts = self.timestamp_normalize(data['ts'])
 
-        t = Ticker(self.id, pair, bid, ask, bid_amount, ask_amount, ts, raw=msg)
+        t = Ticker(self.id, pair, bid, ask, bid_amount, ask_amount, str(data['id']), ts, raw=msg)
         await self.callback(TICKER, t, timestamp)
 
     async def message_handler(self, msg: str, conn, timestamp: float):

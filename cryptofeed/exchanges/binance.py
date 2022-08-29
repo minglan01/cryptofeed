@@ -218,7 +218,7 @@ class Binance(Feed, BinanceRestMixin):
         else:
             ts = timestamp
 
-        t = Ticker(self.id, pair, bid, ask, bid_amount, ask_amount, ts, raw=msg)
+        t = Ticker(self.id, pair, bid, ask, bid_amount, ask_amount, str(msg['u']), ts, raw=msg)
         await self.callback(TICKER, t, timestamp)
 
     async def _liquidations(self, msg: dict, timestamp: float):
