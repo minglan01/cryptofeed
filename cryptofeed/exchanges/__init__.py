@@ -1,11 +1,11 @@
 '''
-Copyright (C) 2017-2022 Bryant Moscon - bmoscon@gmail.com
+Copyright (C) 2017-2023 Bryant Moscon - bmoscon@gmail.com
 
 Please see the LICENSE file for the terms and conditions
 associated with this software.
 '''
 from cryptofeed.defines import *
-from cryptofeed.defines import FTX as FTX_str, EXX as EXX_str, FMFW as FMFW_str, OKX as OKX_str
+from cryptofeed.defines import EXX as EXX_str, FMFW as FMFW_str, OKX as OKX_str
 from .bitdotcom import BitDotCom
 from .phemex import Phemex
 from .ascendex import AscendEX
@@ -15,6 +15,7 @@ from .binance import Binance
 from .binance_delivery import BinanceDelivery
 from .binance_futures import BinanceFutures
 from .binance_us import BinanceUS
+from .binance_tr import BinanceTR
 from .fmfw import FMFW
 from .bitfinex import Bitfinex
 from .bitflyer import Bitflyer
@@ -31,10 +32,8 @@ from .delta import Delta
 from .deribit import Deribit
 from .dydx import dYdX
 from .exx import EXX
-from .ftx import FTX
-from .ftx_us import FTXUS
-from .ftx_tr import FTXTR
 from .gateio import Gateio
+from .gateio_futures import GateioFutures
 from .gemini import Gemini
 from .hitbtc import HitBTC
 from .huobi import Huobi
@@ -44,8 +43,8 @@ from .independent_reserve import IndependentReserve
 from .kraken import Kraken
 from .kraken_futures import KrakenFutures
 from .kucoin import KuCoin
-from .okcoin import OKCoin
 from .okx import OKX
+from .okcoin import OKCoin
 from .poloniex import Poloniex
 from .probit import Probit
 from .upbit import Upbit
@@ -58,6 +57,7 @@ EXCHANGE_MAP = {
     BINANCE_DELIVERY: BinanceDelivery,
     BINANCE_FUTURES: BinanceFutures,
     BINANCE_US: BinanceUS,
+    BINANCE_TR: BinanceTR,
     BINANCE: Binance,
     FMFW_str: FMFW,
     BITDOTCOM: BitDotCom,
@@ -76,10 +76,8 @@ EXCHANGE_MAP = {
     DELTA: Delta,
     DYDX: dYdX,
     EXX_str: EXX,
-    FTX_str: FTX,
-    FTX_US: FTXUS,
-    FTX_TR: FTXTR,
     GATEIO: Gateio,
+    GATEIO_FUTURES: GateioFutures,
     GEMINI: Gemini,
     HITBTC: HitBTC,
     HUOBI_DM: HuobiDM,

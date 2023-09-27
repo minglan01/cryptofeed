@@ -1,5 +1,5 @@
 '''
-Copyright (C) 2017-2022 Bryant Moscon - bmoscon@gmail.com
+Copyright (C) 2017-2023 Bryant Moscon - bmoscon@gmail.com
 
 Please see the LICENSE file for the terms and conditions
 associated with this software.
@@ -104,6 +104,9 @@ class OKX(Feed, OKXRestMixin):
                     data = await self.http_conn.read(self.rest_endpoints[0].route('liquidations', sandbox=self.sandbox).format(instrument_type, status, uly))
                     data = json.loads(data, parse_float=Decimal)
                     timestamp = time.time()
+                    if not data['data']:
+                        LOG.info('%s: no liquidation data received for %s @ %s', self.id, pair, self.rest_endpoints[0].route('liquidations', sandbox=self.sandbox).format(instrument_type, status, uly))
+                        continue
                     if len(data['data'][0]['details']) == 0 or (len(data['data'][0]['details']) > 0 and last_update.get(pair) == data['data'][0]['details'][0]):
                         continue
                     for entry in data['data'][0]['details']:
@@ -421,14 +424,14 @@ class OKX(Feed, OKXRestMixin):
                 await self._ticker(msg, timestamp)
             elif self.websocket_channels[TRADES] in msg['arg']['channel']:
                 await self._trade(msg, timestamp)
+            elif self.websocket_channels[CANDLES] in msg['arg']['channel']:
+                await self._candle(msg, timestamp)
             elif self.websocket_channels[FUNDING] in msg['arg']['channel']:
                 await self._funding(msg, timestamp)
             elif self.websocket_channels[ORDER_INFO] in msg['arg']['channel']:
                 await self._order(msg, timestamp)
             elif self.websocket_channels[OPEN_INTEREST] in msg['arg']['channel']:
                 await self._open_interest(msg, timestamp)
-            elif self.websocket_channels[CANDLES] in msg['arg']['channel']:
-                await self._candle(msg, timestamp)
         else:
             LOG.warning("%s: Unhandled message %s", self.id, msg)
 
